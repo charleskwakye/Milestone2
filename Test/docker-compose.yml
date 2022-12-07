@@ -1,0 +1,47 @@
+version: "3.9"
+networks:
+  milestoneNet: {}
+services:
+  webserver:
+    container_name: frontend
+    build:
+      context: ../Dockerfolder
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "8085:80"
+    networks:
+      - milestoneNet
+  db:
+    container_name: postgres-m2-CNK
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_DB: milestoneDB
+      POSTGRES_USER: postgres_user_CNK
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  api:
+    container_name: api_milestone2
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    command: "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "janedoe@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    ports:
+      - "5050:80"
+volumes:
+  pgdata:
