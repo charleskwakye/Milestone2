@@ -12,8 +12,12 @@ load_dotenv(".env")
 app = FastAPI()
 
 origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
     "http://localhost",
-    "http://192.168.56.5:8085"]
+    "http://192.168.56.5:8085",
+]
+
 
 
 app.add_middleware(
@@ -21,7 +25,8 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],)
+    allow_headers=["*"],
+)
 
 
 app.add_middleware(DBSessionMiddleware, db_url=os.environ["DATABASE_URL"])
